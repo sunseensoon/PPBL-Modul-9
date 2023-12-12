@@ -30,6 +30,7 @@ class _CaptchaState extends State<Captcha> {
   List<Map> daftarTitik = [];
   var warnaTerpakai = {};
   String warnaYangDitanyakan = 'merah';
+  double x = 0, y = 0;
 
   @override
   void initState() {
@@ -44,16 +45,30 @@ class _CaptchaState extends State<Captcha> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            width: widget.lebar,
-            height: widget.tinggi,
-            child: ClipRect(
-              child: CustomPaint(
-              painter: CaptchaPainter(daftarTitik),
-            ),
-          )),
+          GestureDetector(
+            child: SizedBox(
+                width: widget.lebar,
+                height: widget.tinggi,
+                child: ClipRect(
+                  child: CustomPaint(
+                    painter: CaptchaPainter(daftarTitik),
+                  ),
+                )),
+            onDoubleTap: () {
+              setState(() {
+                daftarTitik.clear();
+                buatTitik();
+              });
+            },
+            onTapDown: (details) {
+              setState(() {
+                x = details.localPosition.dx;
+                y = details.localPosition.dy;
+              });
+            },
+          ),
           Text(
-            'Koordinat sentuh: ',
+            'Koordinat sentuh: ${x}, ${y}',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20, height: 2),
           ),
@@ -83,9 +98,7 @@ class _CaptchaState extends State<Captcha> {
   }
 
   void buatPertanyaan() {
-    setState(() {
       warnaYangDitanyakan = stokWarna.keys.elementAt(random.nextInt(3));
-    });
   }
 }
 
